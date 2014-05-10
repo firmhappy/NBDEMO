@@ -20,6 +20,7 @@ import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
@@ -30,7 +31,8 @@ public class MainActivity extends Activity implements BDLocationListener {
 	private LocationClient mLocationClient = null;
 	private LocationData locData;
 	private MyLocationOverlay myLocationOverlay;
-	private Button bt;
+	private Button bt,publish;
+	private MyOverlay mOverlay;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +41,20 @@ public class MainActivity extends Activity implements BDLocationListener {
 		mBMapMan.init(null);
 		setContentView(R.layout.activity_main);
 		bt=(Button) LayoutInflater.from(this).inflate(R.layout.demoview, null).findViewById(R.id.button1);
+		publish=(Button) this.findViewById(R.id.publishbt);
+		publish.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View arg0) {
+				System.out.println("ADD");
+				GeoPoint p=new GeoPoint((int)(locData.latitude*1e6),(int)(locData.longitude*1e6));
+				Drawable mark = MainActivity.this.getResources()
+						.getDrawable(R.drawable.icon_gcoding);
+				OverlayItem item = new OverlayItem(p, "!!!", "???");
+				mOverlay.addItem(item);
+				mMapView.refresh();
+				
+			}});
 		initMap();
 		LocationClientOption option = new LocationClientOption();
 		option.setLocationMode(LocationMode.Hight_Accuracy);// 设置定位模式
@@ -144,7 +160,7 @@ public class MainActivity extends Activity implements BDLocationListener {
 		Drawable mark = this.getResources()
 				.getDrawable(R.drawable.icon_gcoding);
 		OverlayItem item = new OverlayItem(p, "!!!", "???");
-		MyOverlay mOverlay = new MyOverlay(mark, mMapView);
+		mOverlay = new MyOverlay(mark, mMapView);
 		MyOverlay.view = bt;
 		mOverlay.p=p;
 		mMapView.getOverlays().add(mOverlay);
